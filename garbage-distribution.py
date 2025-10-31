@@ -4,14 +4,18 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
+print("Hello and welcome to my project! In it I'll be analyzing and training a model on a dataset about classification of garbage.")
+print("This dataset is from Kaggle, https://www.kaggle.com/datasets/zlatan599/garbage-dataset-classification?resource=download")
+print("In it there are many images of garbage and we'll train the model to be able to distribute which of them is: glass, metal, paper, plastic, or other trash.")
 #Load data and save the images to pixels
 df = pd.read_csv("Garbage_Dataset_Classification/metadata.csv")
-
 folder = "Garbage_Dataset_Classification/images/"
 pixel_data = []
 labels = []
 
+#Convert the images to gray-scale pixels
 for i, row in df.iterrows():
     image_path = os.path.join(folder, row['label'], row['filename'])
     if os.path.exists(image_path):
@@ -20,28 +24,24 @@ for i, row in df.iterrows():
         img_array = np.array(img)
         pixel_data.append(img_array)
         labels.append(row['label'])
-    else:
-        print(f"Image not found: {image_path}")
 
 pixel_data = np.array(pixel_data)
 labels = np.array(labels)
 
+#Output an example image from all the categories
+input("Before we jump in the project, press enter to see how an image from each garbage category looks like. I've pixelized the pictures and I've also made them gray-scale. To continue after that, just close the opened windows from the cross in the top right corner.")
 categories = np.unique(labels)
 for category in categories:
     index = np.where(labels == category)[0][0]
-    plt.imshow(np.squeeze(pixel_data[index]), cmap='gray')
+    plt.imshow(np.squeeze(pixel_data[index]), cmap = 'gray')
     plt.title(f"Label: {category}")
     plt.axis('off')
     plt.show()
 
-np.save("X_images.npy", pixel_data)
-np.save("y_labels.npy", labels)
+labelEncoding = LabelEncoder()
 
-X = np.load("X_images.npy", allow_pickle=True)
-y = np.load("y_labels.npy", allow_pickle=True)
-
-X_train, X_tmp, y_train, y_tmp = train_test_split(pixel_data, labels, test_size=0.3, stratify=labels, random_state=42)
-X_val, X_test, y_val, y_test = train_test_split(X_tmp, y_tmp, test_size=0.5, stratify=y_tmp, random_state=42)
+X_train, X_tmp, y_train, y_tmp = train_test_split(pixel_data, labels, test_size = 0.3, stratify = labels, random_state = 42)
+X_val, X_test, y_val, y_test = train_test_split(X_tmp, y_tmp, test_size = 0.5, stratify = y_tmp, random_state = 42)
 
 print(X_train.shape, X_val.shape, X_test.shape)
 
