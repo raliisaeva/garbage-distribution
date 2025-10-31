@@ -1,10 +1,13 @@
+'''
+
+
 import os
 from PIL import Image
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
+import tensorflow as tf
 
 print("Hello and welcome to my project! In it I'll be analyzing and training a model on a dataset about classification of garbage.")
 print("This dataset is from Kaggle, https://www.kaggle.com/datasets/zlatan599/garbage-dataset-classification?resource=download")
@@ -38,14 +41,6 @@ for category in categories:
     plt.axis('off')
     plt.show()
 
-labelEncoding = LabelEncoder()
-
-X_train, X_tmp, y_train, y_tmp = train_test_split(pixel_data, labels, test_size = 0.3, stratify = labels, random_state = 42)
-X_val, X_test, y_val, y_test = train_test_split(X_tmp, y_tmp, test_size = 0.5, stratify = y_tmp, random_state = 42)
-
-print(X_train.shape, X_val.shape, X_test.shape)
-
-
 #Make an observation about the distribution of data in the dataset.
 print("Before we start anything, we'll first analyze our dataset. Here's a glance of it:")
 print(df.head())
@@ -65,3 +60,14 @@ plt.show()
 
 print("From that we can say that the data is pretty well distributed and therefore the dataset will be fair to work with.")
 print("The dataset is from Kaggle and it was created this year. Its creater is said to be a student in a pretty prestigious and well-known school in Italy. In the same time, from the creator's account we can see that they are pretty active and decently good at machine learning, so we can say that the dataset is pretty authentic.")
+
+labelEncoding = LabelEncoder()
+
+X_train, X_tmp, y_train, y_tmp = train_test_split(pixel_data, labels, test_size = 0.3, stratify = labels, random_state = 42)
+X_val, X_test, y_val, y_test = train_test_split(X_tmp, y_tmp, test_size = 0.5, stratify = y_tmp, random_state = 42)
+
+print(X_train.shape, X_val.shape, X_test.shape)
+
+
+
+'''
