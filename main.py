@@ -26,7 +26,7 @@ for label in df['label'].unique():
     for _, row in df_sample.iterrows():
         image_path = os.path.join(folder, row['label'], row['filename'])
         if os.path.exists(image_path):
-            img = Image.open(image_path).convert('L').resize((128, 128))
+            img = Image.open(image_path).convert('L').resize((64, 64))
             pixel_data.append(np.array(img))
             labels.append(row['label'])
 
@@ -36,6 +36,7 @@ print(f"Loaded {len(pixel_data)} images.")
 
 np.save("X_images.npy", pixel_data)
 np.save("y_labels.npy", labels)
+np.savez_compressed("X_images_compressed.npz", X = pixel_data, y = labels)
 
 
 #Output an example image from all the categories
