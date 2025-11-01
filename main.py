@@ -20,7 +20,7 @@ labels = []
 #Convert the images to gray-scale pixels
 for label in df['label'].unique():
     df_label = df[df['label'] == label]
-    n = len(df_label) // 3
+    n = max(1, len(df_label)//10)
     df_sample = df_label.sample(n = n, random_state = 42)
 
     for _, row in df_sample.iterrows():
