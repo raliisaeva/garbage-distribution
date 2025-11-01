@@ -23,7 +23,7 @@ for _, row in df.iterrows():
     if os.path.exists(image_path):
         try:
             img = Image.open(image_path).convert('L')
-            img = img.resize((128, 128))
+            img = img.resize((64, 64))
             pixel_data.append(np.array(img))
             labels.append(row['label'])
         except Exception as e:
