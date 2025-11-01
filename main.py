@@ -18,20 +18,24 @@ labels = []
 
 
 #Convert the images to gray-scale pixels
-for _, row in df.iterrows():
-    image_path = os.path.join(folder, row['label'], row['filename'])
-    if os.path.exists(image_path):
-        try:
-            img = Image.open(image_path).convert('L')
-            img = img.resize((64, 64))
+for label in df['label'].unique():
+    df_label = df[df['label'] == label]
+    n = len(df_label) // 3
+    df_sample = df_label.sample(n = n, random_state = 42)
+
+    for _, row in df_sample.iterrows():
+        image_path = os.path.join(folder, row['label'], row['filename'])
+        if os.path.exists(image_path):
+            img = Image.open(image_path).convert('L').resize((128, 128))
             pixel_data.append(np.array(img))
             labels.append(row['label'])
-        except Exception as e:
-            print(f"Failed to load {image_path}: {e}")
 
 pixel_data = np.array(pixel_data)
 labels = np.array(labels)
 print(f"Loaded {len(pixel_data)} images.")
+
+np.save("X_images.npy", pixel_data)
+np.save("y_labels.npy", labels)
 
 
 #Output an example image from all the categories
