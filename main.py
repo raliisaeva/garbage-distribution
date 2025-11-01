@@ -20,13 +20,13 @@ labels = []
 #Convert the images to gray-scale pixels
 for label in df['label'].unique():
     df_label = df[df['label'] == label]
-    n = max(1, len(df_label)//10)
+    n = len(df_label)
     df_sample = df_label.sample(n = n, random_state = 42)
 
     for _, row in df_sample.iterrows():
         image_path = os.path.join(folder, row['label'], row['filename'])
         if os.path.exists(image_path):
-            img = Image.open(image_path).convert('L').resize((64, 64))
+            img = Image.open(image_path).convert('L').resize((128, 128))
             pixel_data.append(np.array(img))
             labels.append(row['label'])
 
