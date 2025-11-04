@@ -32,7 +32,7 @@ for label in df['label'].unique():
 
 pixel_data = np.array(pixel_data)
 labels = np.array(labels)
-print(f"Loaded {len(pixel_data)} images.")
+print(f"Loaded {len(pixel_data)} images. I've deleted around 2/3 of the pictures for the files to be lighter.")
 
 np.save("X_images.npy", pixel_data)
 np.save("y_labels.npy", labels)
