@@ -6,28 +6,23 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
-import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
+import requests
+from io import BytesIO
 
 # ----------------------------
 # 1. Dataset class
 # ----------------------------
 class GarbageDataset(Dataset):
-    def __init__(self, images, labels, transform=None):
-        self.images = images
-        self.labels = labels
-        self.transform = transform
+    def __init__(self, images, labels):
+        self.images = torch.tensor(images, dtype=torch.float32).unsqueeze(1) / 255.0
+        self.labels = torch.tensor(labels, dtype=torch.long)
         
     def __len__(self):
         return len(self.images)
     
     def __getitem__(self, idx):
-        img = self.images[idx]
-        img = Image.fromarray(img.astype(np.uint8))
-        if self.transform:
-            img = self.transform(img)
-        label = self.labels[idx]
-        return img, label
+        return self.images[idx], self.labels[idx]
 
 # ----------------------------
 # 2. Load dataset
@@ -45,20 +40,15 @@ np.random.shuffle(indices)
 pixel_data, y = pixel_data[indices], y[indices]
 
 # Split train/test
-split = int(0.1 * len(pixel_data))
+split = int(0.8 * len(pixel_data))
 X_train, X_test = pixel_data[:split], pixel_data[split:]
 y_train, y_test = y[:split], y[split:]
 
 # ----------------------------
-# 3. Transformations
+# 3. Create datasets and loaders (manual conversion)
 # ----------------------------
-transform = transforms.Compose([
-    transforms.Grayscale(),          # ensure single channel
-    transforms.ToTensor(),           # convert to tensor and normalize to [0,1]
-])
-
-train_dataset = GarbageDataset(X_train, y_train, transform=transform)
-test_dataset = GarbageDataset(X_test, y_test, transform=transform)
+train_dataset = GarbageDataset(X_train, y_train)
+test_dataset = GarbageDataset(X_test, y_test)
 
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
@@ -101,7 +91,7 @@ for epoch in range(epochs):
     model.train()
     running_loss = 0.0
     for imgs, labels_batch in train_loader:
-        imgs, labels_batch = imgs.to(device, dtype=torch.float), labels_batch.to(device)
+        imgs, labels_batch = imgs.to(device), labels_batch.to(device)
         
         optimizer.zero_grad()
         outputs = model(imgs)
@@ -123,7 +113,7 @@ def evaluate(loader):
     total = 0
     with torch.no_grad():
         for imgs, labels_batch in loader:
-            imgs, labels_batch = imgs.to(device, dtype=torch.float), labels_batch.to(device)
+            imgs, labels_batch = imgs.to(device), labels_batch.to(device)
             outputs = model(imgs)
             preds = torch.argmax(outputs, dim=1)
             correct += (preds == labels_batch).sum().item()
@@ -134,3 +124,33 @@ train_acc = evaluate(train_loader)
 test_acc = evaluate(test_loader)
 print(f"Training Accuracy: {train_acc*100:.2f}%")
 print(f"Test Accuracy: {test_acc*100:.2f}%")
+
+
+
+
+
+
+# ~~~~~~~~~~~~ NEW CODE ~~~~~~~~~~~~~~~~~~~~~~
+
+# --- Load image directly from URL ---
+url = "https://sfmcd.org/wp-content/uploads/2021/07/Cardboard-hero.jpg"
+response = requests.get(url)
+img = Image.open(BytesIO(response.content)).convert("L")  # grayscale
+img = img.resize((128, 128))
+
+# Display the image
+plt.imshow(img, cmap='gray')
+plt.axis('off')
+plt.show()
+
+# --- Convert to tensor and normalize ---
+img_tensor = torch.tensor(np.array(img), dtype=torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
+img_tensor = img_tensor.to(device)
+
+# --- Predict with the model ---
+model.eval()
+with torch.no_grad():
+    output = model(img_tensor)
+    pred_class = torch.argmax(output, dim=1).item()
+
+print(f"Predicted class: {categories[pred_class]}")
