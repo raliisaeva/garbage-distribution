@@ -38,6 +38,30 @@ class GarbageDataset(Dataset):
 # ----------------------------
 # 2. Load dataset
 # ----------------------------
+# df = pd.read_csv("Garbage_Dataset_Classification/metadata.csv")
+# folder = "Garbage_Dataset_Classification/images/"
+# pixel_data = []
+# labels = []
+# #Convert the images to gray-scale pixels
+# for label in df['label'].unique():
+#     df_label = df[df['label'] == label]
+#     n = len(df_label)
+#     df_sample = df_label.sample(n = n, random_state = 42)
+
+#     for _, row in df_sample.iterrows():
+#         image_path = os.path.join(folder, row['label'], row['filename'])
+#         if os.path.exists(image_path):
+#             img = Image.open(image_path).convert('L').resize((128, 128))
+#             pixel_data.append(np.array(img))
+#             labels.append(row['label'])
+
+# pixel_data = np.array(pixel_data)
+# labels = np.array(labels)
+# print(f"Loaded {len(pixel_data)} images")
+
+# np.save("X_images.npy", pixel_data)
+# np.save("y_labels.npy", labels)
+
 pixel_data = np.load("X_images.npy")
 labels = np.load("y_labels.npy")
 
@@ -113,11 +137,24 @@ else:
 # ----------------------------
 # 5. Loop for user input URLs
 # ----------------------------
-while True:
-    url = input("\nEnter image URL (or type 'exit' to quit): ").strip()
-    if url.lower() == "exit" or url == "":
-        break
+# ----------------------------
+# 5. Loop for user input URLs (or command-line URL)
+# ----------------------------
+import sys
 
+# If URL was provided as a command-line argument (e.g., from Flask)
+if len(sys.argv) > 1:
+    url = sys.argv[1].strip()
+    urls = [url]  # run once for this URL
+else:
+    urls = []
+    while True:
+        url = input("Enter image URL (or type 'exit' to quit): ").strip()
+        if url.lower() == "exit" or url == "":
+            break
+        urls.append(url)
+
+for url in urls:
     try:
         response = requests.get(url)
         img = Image.open(BytesIO(response.content)).convert("L")
