@@ -1,13 +1,7 @@
-# ----------------------------
-# Fix OpenMP duplicate library error
-# Must be at the very top, before any imports
-# ----------------------------
+#Had to import this because of problems with torch and numpy libraries. Got a little help from ChatGPT for debugging this
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-# ----------------------------
-# Imports
-# ----------------------------
 import pandas as pd
 import numpy as np
 from PIL import Image
@@ -19,11 +13,10 @@ import matplotlib.pyplot as plt
 import requests
 from io import BytesIO
 
-MODEL_PATH = "garbage_cnn.pth"  # file to save/load model
+#Save the model
+MODEL_PATH = "garbage_cnn.pth"
 
-# ----------------------------
-# 1. Dataset class
-# ----------------------------
+#Create a dataset to make the model learn efficientlly
 class GarbageDataset(Dataset):
     def __init__(self, images, labels):
         self.images = torch.tensor(images, dtype=torch.float32).unsqueeze(1) / 255.0
@@ -35,9 +28,8 @@ class GarbageDataset(Dataset):
     def __getitem__(self, idx):
         return self.images[idx], self.labels[idx]
 
-# ----------------------------
-# 2. Load dataset
-# ----------------------------
+# Used to generate the files "X_image.npy" and "y_labels.npy". Since the files have already been created and the data inside of them doesn't change, I've commented out the code in order to speed up the program and just the already computed data
+
 # df = pd.read_csv("Garbage_Dataset_Classification/metadata.csv")
 # folder = "Garbage_Dataset_Classification/images/"
 # pixel_data = []
@@ -62,6 +54,7 @@ class GarbageDataset(Dataset):
 # np.save("X_images.npy", pixel_data)
 # np.save("y_labels.npy", labels)
 
+#Load data from files
 pixel_data = np.load("X_images.npy")
 labels = np.load("y_labels.npy")
 
@@ -78,17 +71,15 @@ X_train = pixel_data
 y_train = y
 
 train_dataset = GarbageDataset(X_train, y_train)
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size = 32, shuffle = True)
 
-# ----------------------------
-# 3. Define CNN
-# ----------------------------
-class SimpleCNN(nn.Module):
+#Create CNN class that will be the model
+class CNN_model(nn.Module):
     def __init__(self, num_classes):
-        super(SimpleCNN, self).__init__()
-        self.conv1 = nn.Conv2d(1, 8, kernel_size=3)
+        super(CNN_model, self).__init__()
+        self.conv1 = nn.Conv2d(1, 8, kernel_size = 3)
         self.relu1 = nn.ReLU()
-        self.conv2 = nn.Conv2d(8, 16, kernel_size=3)
+        self.conv2 = nn.Conv2d(8, 16, kernel_size = 3)
         self.relu2 = nn.ReLU()
         self.flatten = nn.Flatten()
         self.fc = nn.Linear(16 * 124 * 124, num_classes)
@@ -101,19 +92,17 @@ class SimpleCNN(nn.Module):
         return x
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = SimpleCNN(num_classes=len(categories)).to(device)
+model = CNN_model(num_classes=len(categories)).to(device)
 
-# ----------------------------
-# 4. Check if model file exists
-# ----------------------------
+#Load model if it already exists, otherwise generate it
 if os.path.exists(MODEL_PATH):
-    model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+    model.load_state_dict(torch.load(MODEL_PATH, map_location = device))
     model.eval()
-    print("Loaded model from file, skipping training.")
+    print("CNN model is loaded from file. Continue to program")
+
 else:
-    # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr = 0.001)
     epochs = 5
 
     for epoch in range(epochs):
@@ -128,24 +117,18 @@ else:
             optimizer.step()
             running_loss += loss.item() * imgs.size(0)
         epoch_loss = running_loss / len(train_loader.dataset)
+	    #Prints to show the user that the program is processing, not just not loading or frozen
         print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss:.4f}")
 
-    # Save the trained model
+    #Save the trained model
     torch.save(model.state_dict(), MODEL_PATH)
     print(f"Model saved to {MODEL_PATH}")
 
-# ----------------------------
-# 5. Loop for user input URLs
-# ----------------------------
-# ----------------------------
-# 5. Loop for user input URLs (or command-line URL)
-# ----------------------------
+#Prompt the user to enter an url
 import sys
-
-# If URL was provided as a command-line argument (e.g., from Flask)
 if len(sys.argv) > 1:
     url = sys.argv[1].strip()
-    urls = [url]  # run once for this URL
+    urls = [url]
 else:
     urls = []
     while True:
@@ -159,17 +142,17 @@ for url in urls:
         response = requests.get(url)
         img = Image.open(BytesIO(response.content)).convert("L")
         img = img.resize((128, 128))
-        plt.imshow(img, cmap='gray')
+        plt.imshow(img, cmap = 'gray')
         plt.axis('off')
         plt.show()
 
-        img_tensor = torch.tensor(np.array(img), dtype=torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
+        img_tensor = torch.tensor(np.array(img), dtype = torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
         img_tensor = img_tensor.to(device)
 
         model.eval()
         with torch.no_grad():
             output = model(img_tensor)
-            pred_class = torch.argmax(output, dim=1).item()
+            pred_class = torch.argmax(output, dim = 1).item()
 
         print(f"Predicted class: {categories[pred_class]}")
 
