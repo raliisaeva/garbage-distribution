@@ -68,6 +68,8 @@ class GarbageDataset(Dataset):
 pixel_data = np.load("X_images.npy")
 labels = np.load("y_labels.npy")
 
+st.write("Loaded data from files X_images and y_labels")
+
 categories = sorted(np.unique(labels))
 y = np.array([categories.index(l) for l in labels])
 
