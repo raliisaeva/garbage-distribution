@@ -138,24 +138,27 @@ else:
 
 #Prompt the user to enter an url
 while True:
-    url = input("\nEnter image URL (or type 'exit' to quit): ").strip()
+	with st.form(key = "url_form"):
+		url = st.text_input("Enter image URL")
+		st.form_submit_button("Submit")
+	
     if url.lower() == "exit" or url == "":
         break
     try:
         response = requests.get(url)
         img = Image.open(BytesIO(response.content)).convert("L")
         img = img.resize((128, 128))
-        plt.imshow(img, cmap='gray')
+        plt.imshow(img, cmap = 'gray')
         plt.axis('off')
         plt.show()
 
-        img_tensor = torch.tensor(np.array(img), dtype=torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
+        img_tensor = torch.tensor(np.array(img), dtype = torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
         img_tensor = img_tensor.to(device)
 
         model.eval()
         with torch.no_grad():
             output = model(img_tensor)
-            pred_class = torch.argmax(output, dim=1).item()
+            pred_class = torch.argmax(output, dim = 1).item()
 
         st.write(f"Predicted class: {categories[pred_class]}")
 
