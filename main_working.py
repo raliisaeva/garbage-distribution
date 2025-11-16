@@ -145,14 +145,14 @@ with st.form(key = "url_form"):
 
 if submitted:
 	try:
-#		st.write("Current URL: ", url)
+		st.write("Current URL: ", url)
 #		response = requests.get(url)
 #		img = Image.open(BytesIO(response.content)).convert("L")
 #		img = img.resize((128, 128))
 		#plt.imshow(img, cmap = 'gray')
 		#plt.axis('off')
 		#plt.show()
-		response = requests.get(url)
+#		response = requests.get(url)
 #		img = Image.open(BytesIO(response.content))
 #		st.image(img, caption="Image from URL", use_column_width=True)
 	
