@@ -138,6 +138,7 @@ else:
 
 #Prompt the user to enter an url
 url = ""
+submitted = False
 with st.form(key = "url_form"):
 	url = st.text_input("Enter image URL")
 	submitted = st.form_submit_button("Submit")
