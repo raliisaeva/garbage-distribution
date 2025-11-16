@@ -6,5 +6,4 @@ Dataset
 DataLoader
 matplotlib
 requests
-BytesIO
 streamlit
