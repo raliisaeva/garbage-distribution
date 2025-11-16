@@ -145,7 +145,7 @@ while True:
 	
 	if url.lower() == "exit":
 		break
-    try:
+	try:
 		st.write("Current URL: ", url)
 		response = requests.get(url)
 		img = Image.open(BytesIO(response.content)).convert("L")
