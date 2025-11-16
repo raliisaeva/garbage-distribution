@@ -4,7 +4,8 @@ Image
 torch
 torch.nn
 torch.optim
-Dataset, DataLoader
+Dataset
+DataLoader
 matplotlib.pyplot
 requests
 BytesIO
