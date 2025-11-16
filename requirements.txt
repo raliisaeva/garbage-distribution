@@ -7,3 +7,4 @@ DataLoader
 matplotlib
 requests
 streamlit
+flask
