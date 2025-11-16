@@ -2,8 +2,6 @@ pandas
 numpy
 Image
 torch
-torch.nn
-torch.optim
 Dataset
 DataLoader
 matplotlib.pyplot
