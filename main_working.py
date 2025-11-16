@@ -161,4 +161,4 @@ if submitted:
 			pred_class = torch.argmax(output, dim = 1).item()
 		st.write(f"Predicted class: {categories[pred_class]}")
 	except Exception as e:
-	st.write(f"Error loading image: {e}")
+		st.write(f"Error loading image: {e}")
