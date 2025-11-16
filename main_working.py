@@ -144,18 +144,18 @@ while True:
 		st.form_submit_button("Submit")
 	
 	if url.lower() == "exit":
-        break
+		break
     try:
 		st.write("Current URL: ", url)
-        response = requests.get(url)
-        img = Image.open(BytesIO(response.content)).convert("L")
-        img = img.resize((128, 128))
+		response = requests.get(url)
+		img = Image.open(BytesIO(response.content)).convert("L")
+		img = img.resize((128, 128))
         #plt.imshow(img, cmap = 'gray')
         #plt.axis('off')
         #plt.show()
 
-        img_tensor = torch.tensor(np.array(img), dtype = torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
-        img_tensor = img_tensor.to(device)
+		img_tensor = torch.tensor(np.array(img), dtype = torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
+		img_tensor = img_tensor.to(device)
 
         model.eval()
         with torch.no_grad():
