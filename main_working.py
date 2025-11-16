@@ -145,21 +145,28 @@ with st.form(key = "url_form"):
 
 if submitted:
 	try:
-		st.write("Current URL: ", url)
-		response = requests.get(url)
-		img = Image.open(BytesIO(response.content)).convert("L")
-		img = img.resize((128, 128))
+#		st.write("Current URL: ", url)
+#		response = requests.get(url)
+#		img = Image.open(BytesIO(response.content)).convert("L")
+#		img = img.resize((128, 128))
 		#plt.imshow(img, cmap = 'gray')
 		#plt.axis('off')
 		#plt.show()
 	
-		img_tensor = torch.tensor(np.array(img), dtype = torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
-		img_tensor = img_tensor.to(device)
+        # Fetch the image
+        response = requests.get(url)
+        img = Image.open(BytesIO(response.content))
+
+        # Show the image in the app
+        st.image(img, caption="Image from URL", use_column_width=True)
 	
-		model.eval()
-		with torch.no_grad():
-			output = model(img_tensor)
-			pred_class = torch.argmax(output, dim = 1).item()
-		st.write(f"Predicted class: {categories[pred_class]}")
+#		img_tensor = torch.tensor(np.array(img), dtype = torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
+#		img_tensor = img_tensor.to(device)
+	
+#		model.eval()
+#		with torch.no_grad():
+#			output = model(img_tensor)
+#			pred_class = torch.argmax(output, dim = 1).item()
+#		st.write(f"Predicted class: {categories[pred_class]}")
 	except Exception as e:
 		st.write(f"Error loading image: {e}")
