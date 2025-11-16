@@ -157,12 +157,10 @@ while True:
 		img_tensor = torch.tensor(np.array(img), dtype = torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
 		img_tensor = img_tensor.to(device)
 
-        model.eval()
-        with torch.no_grad():
-            output = model(img_tensor)
-            pred_class = torch.argmax(output, dim = 1).item()
-
-        st.write(f"Predicted class: {categories[pred_class]}")
-
-    except Exception as e:
-        st.write(f"Error loading image: {e}")
+		model.eval()
+		with torch.no_grad():
+			output = model(img_tensor)
+			pred_class = torch.argmax(output, dim = 1).item()
+		st.write(f"Predicted class: {categories[pred_class]}")
+	except Exception as e:
+		st.write(f"Error loading image: {e}")
