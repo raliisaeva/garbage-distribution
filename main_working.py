@@ -21,7 +21,7 @@ st.write("This dataset is from Kaggle, https://www.kaggle.com/datasets/zlatan599
 st.write("In it there are many images of garbage and we'll train the model to be able to distribute which of them is: glass, metal, paper, plastic, or other trash.")
 st.write("I've analyzed the dataset and I've come to the conslusion that the data is pretty well distributed between the different classes of garbage and therefore the dataset is fair to work with.")
 st.write("In this project, you can enter the url of an image from the internet and the model will predict its class. The accuracy of the model is around 30% (checked in the other files that can be found in the GitHub repository).")
-st.write("If you want to get a "prediction" for your personal image, please upload it to a website like https://postimages.org/ and then paste the url to this application.)
+st.write("If you want to get a 'prediction' for your personal image, please upload it to a website like https://postimages.org/ and then paste the url to this application.)
 
 #Save the model
 MODEL_PATH = "garbage_cnn.pth"
