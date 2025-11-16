@@ -152,13 +152,9 @@ if submitted:
 		#plt.imshow(img, cmap = 'gray')
 		#plt.axis('off')
 		#plt.show()
-	
-        # Fetch the image
-        response = requests.get(url)
-        img = Image.open(BytesIO(response.content))
-
-        # Show the image in the app
-        st.image(img, caption="Image from URL", use_column_width=True)
+		response = requests.get(url)
+		img = Image.open(BytesIO(response.content))
+		st.image(img, caption="Image from URL", use_column_width=True)
 	
 #		img_tensor = torch.tensor(np.array(img), dtype = torch.float32).unsqueeze(0).unsqueeze(0) / 255.0
 #		img_tensor = img_tensor.to(device)
